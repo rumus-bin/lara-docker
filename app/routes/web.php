@@ -14,3 +14,11 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::group(['prefix' => 'patterns', 'namespace' => 'Patterns'], function () {
+    Route::get('property-container', 'PropertyContainerController@index');
+});
+
+Route::group(['prefix' => 'charts', 'namespace' => 'Charts'], function () {
+    Route::get('liner-chart', 'LineChartController@index');
+});

@@ -6,7 +6,7 @@ WORKDIR /var/www
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
-    mysql-client \
+    mariadb-client \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
@@ -17,6 +17,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl
+
+RUN cd ~ \
+    && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get install -y build-essential
 
 RUN apt-get install -y cron && \
 	apt-get install -y supervisor
