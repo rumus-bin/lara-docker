@@ -11,7 +11,7 @@ class LineChartController extends Controller
 {
     public function index(Request $request)
     {
-        dd($request->get('test'));
+        return view('charts/liner');
     }
 
 }
