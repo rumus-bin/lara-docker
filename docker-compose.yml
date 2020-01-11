@@ -64,6 +64,13 @@ services:
     networks:
       - app-network
 
+  adminer:
+    image: adminer
+    container_name: "${DOCKER_PREFIX}-adminer"
+    restart: unless-stopped
+    ports:
+      - "6080:8080"
+
 #Docker Networks
 networks:
   app-network:

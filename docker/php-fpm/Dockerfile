@@ -52,4 +52,4 @@ COPY --chown=www:www . /var/www
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 #CMD ["php-fpm"]
-CMD  service supervisor start; php-fpm
+CMD  service supervisor start; php-fpm; php artisan websockets:serve;

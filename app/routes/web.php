@@ -21,4 +21,9 @@ Route::group(['prefix' => 'patterns', 'namespace' => 'Patterns'], function () {
 
 Route::group(['prefix' => 'charts', 'namespace' => 'Charts'], function () {
     Route::get('liner-chart', 'LineChartController@index');
+    Route::get('pie-chart', 'PieChartController@index');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
