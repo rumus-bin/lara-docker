@@ -11,6 +11,14 @@
 |
 */
 
+Route::group([
+    'namespace' => 'Admin',
+    'middleware' => ['auth:web','checkAdmin'],
+    'prefix' => 'dashboard'
+], function () {
+    Route::get('/', 'AdminController@index');
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
