@@ -2,8 +2,15 @@
 
 namespace App\Console\Commands;
 
+use App\Mail\SendCredentials;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Ratchet\Wamp\Exception;
 
 class CreateAdmin extends Command
 {
@@ -22,12 +29,18 @@ class CreateAdmin extends Command
     protected $description = 'Command description';
 
     /**
+     * @var string
+     */
+    private $stringChoiceVars;
+
+    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct()
     {
+        $this->stringChoiceVars = str_shuffle('abcdefghjklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ234567890!$%^&!$%^&');
         parent::__construct();
     }
 
@@ -38,14 +51,38 @@ class CreateAdmin extends Command
      */
     public function handle()
     {
+        $pass = substr($this->stringChoiceVars, 0, 10);
+
         $adminEmail = $this->validate_cmd(function() {
             return  $this->ask('Enter admin email please: ');
         }, ['email','required|email']);
 
         if ($this->confirm("Admin was created with {$adminEmail}. Continue?")) {
-            $this->info($adminEmail);
-        }
+            DB::beginTransaction();
 
+            $adminRole = Role::where('title', Role::DEFAULT_ADMIN_ROLE)->first();
+            $userRole = Role::where('title', Role::DEFAULT_USER_ROLE)->first();
+            try {
+
+                $user = User::create([
+                    'name' => 'admin',
+                    'email' => $adminEmail,
+                    'password' => Hash::make($pass)
+                ]);
+
+                $user->roles()->attach($adminRole);
+                $user->roles()->attach($userRole);
+
+                Mail::to($adminEmail)->send(new SendCredentials($adminEmail, $pass));
+                DB::commit();
+
+            } catch (Exception $exception) {
+               $this->error($exception->getMessage());
+               DB::rollBack();
+            }
+
+            $this->info('Admin successful created with email: ' . $adminEmail);
+        }
     }
 
     /**

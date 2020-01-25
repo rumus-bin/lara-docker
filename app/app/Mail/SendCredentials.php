@@ -12,13 +12,26 @@ class SendCredentials extends Mailable
     use Queueable, SerializesModels;
 
     /**
+     * @var string
+     */
+    public $email;
+
+    /**
+     * @var string
+     */
+    public $password;
+
+    /**
      * Create a new message instance.
      *
+     * @param string $email
+     * @param string $password
      * @return void
      */
-    public function __construct()
+    public function __construct($email, $password)
     {
-        //
+        $this->email = $email;
+        $this->password = $password;
     }
 
     /**
@@ -28,6 +41,7 @@ class SendCredentials extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+
+        return $this->view('mails.sendCreds');
     }
 }
